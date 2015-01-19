@@ -1,0 +1,114 @@
+<project name="blink1" default="dist" basedir=".">
+
+    <property name="project.name" value="blink1"/>
+
+    <property name="core.src.dir" value="${basedir}/core/src"/>
+    <property name="lightclock.src.dir" value="${basedir}/lightclock/src"/>
+    <property name="lightclock.test.dir" value="${basedir}/lightclock/test"/>
+
+    <property name="production.lib.dir" value="${basedir}/lib/production"/>
+    <property name="native.lib.dir" value="${basedir}/lib/native"/>
+    <property name="test.lib.dir" value="${basedir}/lib/test"/>
+
+    <property name="build.dir" value="${basedir}/build"/>
+    <property name="production.classes.dir" value="${build.dir}/classes/production"/>
+    <property name="test.classes.dir" value="${build.dir}/classes/test"/>
+    <property name="dist.dir" value="${build.dir}/dist"/>
+
+    <path id="production.classpath">
+        <fileset dir="${production.lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test.classpath">
+        <path refid="production.classpath"/>
+
+        <fileset dir="${test.lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${production.classes.dir}/core"/>
+        <mkdir dir="${production.classes.dir}/lightclock"/>
+        <mkdir dir="${test.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/lib"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="build" depends="init">
+        <javac srcdir="${core.src.dir}" destdir="${production.classes.dir}/core" debug="yes">
+            <classpath refid="production.classpath"/>
+        </javac>
+
+        <javac srcdir="${lightclock.src.dir}" destdir="${production.classes.dir}/lightclock" debug="yes">
+            <classpath refid="production.classpath"/>
+            <classpath path="${production.classes.dir}/core" />
+        </javac>
+
+        <javac srcdir="${lightclock.test.dir}" destdir="${test.classes.dir}" debug="yes">
+            <classpath refid="test.classpath"/>
+            <classpath path="${production.classes.dir}/core" />
+            <classpath path="${production.classes.dir}/lightclock" />
+        </javac>
+    </target>
+
+    <target name="test" depends="build">
+        <junit printsummary="yes" haltonfailure="yes">
+            <classpath>
+                <pathelement location="${test.classes.dir}"/>
+                <path refid="test.classpath"/>
+                <path path="${production.classes.dir}/core"/>
+                <path path="${production.classes.dir}/lightclock"/>
+            </classpath>
+
+            <formatter type="plain"/>
+
+            <batchtest fork="no" todir="${build.dir}">
+                <fileset dir="${lightclock.test.dir}">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="dist" depends="test">
+        <zip destfile="${dist.dir}/lib/${project.name}-core.jar">
+            <fileset dir="${production.classes.dir}/core"/>
+        </zip>
+
+        <zip destfile="${dist.dir}/lib/${project.name}-lightclock.jar">
+            <fileset dir="${production.classes.dir}/lightclock"/>
+        </zip>
+
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="${production.lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${dist.dir}/lib">
+            <fileset dir="${native.lib.dir}/mac" />
+            <fileset dir="${native.lib.dir}/raspberrypi" />
+        </copy>
+
+        <copy todir="${dist.dir}">
+            <fileset dir="lightclock/etc">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+
+        <copy todir="${dist.dir}">
+            <fileset dir="${basedir}">
+                <include name="*.sh"/>
+            </fileset>
+        </copy>
+    </target>
+
+</project>

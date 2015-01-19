@@ -1,0 +1,53 @@
+body {
+    font-family: "Trebuchet MS", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 50px;
+}
+.centered {
+    text-align: center;
+}
+footer {
+    text-align: center;
+    padding-top: 32px;
+    padding-bottom: 32px;
+    color: gray;
+    background: #dddddd;
+}
+.navbar-inverse .navbar-inner {
+    background: black;
+}
+.container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.section {
+    margin-right: 0;
+    margin-left: 0;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.sectionWhite {
+    background: #ffffff;
+}
+.sectionShaded {
+    background: #dddddd;
+}
+.row {
+    padding-bottom: 20px;
+}
+h3 {
+    font-size: 20px;
+}
+.profileImage {
+    border: 1px solid #808080;
+    border-radius: 6px;
+    height: 48px;
+    width: 48px;
+}
+.duration {
+    font-size: 14px;
+    color: gray;
+}
